@@ -26,6 +26,8 @@
 
 from __future__ import absolute_import, print_function
 
+import os
+
 from cernopendata_pages.config import *
 from cernopendata_theme.config import *
 from invenio_marc21.config import \
@@ -44,7 +46,8 @@ CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 
 # JSONSchemas
 JSONSCHEMAS_ENDPOINT = '/schema'
-JSONSCHEMAS_HOST = 'opendata.cern.ch'
+JSONSCHEMAS_HOST = '127.0.0.1'
+# JSONSCHEMAS_URL_SCHEME = 'http'
 
 # OAI Server
 OAISERVER_RECORD_INDEX = 'marc21'
@@ -64,9 +67,33 @@ RECORDS_UI_ENDPOINTS = dict(
         template='invenio_marc21/detail.html',
         permission_factory_imp=None,
     ),
+    termid=dict(
+        pid_type='termid',
+        route='/terms/<pid_value>',
+        template='invenio_records_ui/detail.html',
+        permission_factory_imp=None,
+    )
 )
 
+
 RECORDS_REST_ENDPOINTS['recid']['search_index'] = '_all'
+RECORDS_REST_ENDPOINTS['termid'] = {
+    'pid_type': 'termid',
+    'pid_minter': 'cernopendata_termid_minter',
+    'pid_fetcher': 'cernopendata_termid_fetcher',
+    'default_media_type': 'application/json',
+    'max_result_window': 10000,
+    'item_route': '/terms/<pid(termid):pid_value>',
+    'list_route': '/terms',
+    'record_serializers': {
+        'application/json': ('invenio_records_rest.serializers'
+                             ':json_v1_response'),
+    },
+    'search_serializers': {
+        'application/json': ('invenio_records_rest.serializers'
+                             ':json_v1_search'),
+    },
+}
 
 RECORDS_REST_FACETS = dict(
     _all=dict(
@@ -113,3 +140,8 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {}
 OAISERVER_RECORD_INDEX = '_all'
 #: OAI ID prefix.
 OAISERVER_ID_PREFIX = 'oai:opendata.cern.ch:recid/'
+
+SQLALCHEMY_DATABASE_URI = os.environ.get(
+    'APP_SQLALCHEMY_DATABASE_URI',
+    'postgresql+psycopg2://localhost/cernopendata'
+)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Open Data Portal.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # CERN Open Data Portal is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,9 +22,4 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
--e git+https://github.com/cernopendata/cernopendata-theme.git#egg=cernopendata-theme
--e git+https://github.com/cernopendata/cernopendata-pages.git#egg=cernopendata-pages
-
--e git+https://github.com/ioannistsanaktsidis/cernopendata-fixtures.git@glossary-fixtures#egg=cernopendata-fixtures
-
--e .[all]
+"""CERN Open Data Mappings."""
