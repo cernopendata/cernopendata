@@ -1,0 +1,44 @@
+# This file is part of CERN Open Data Portal.
+# Copyright (C) 2017 CERN.
+#
+# CERN Open Data Portal is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# CERN Open Data Portal is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with CERN Open Data Portal; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
+
+# What:
+# - List of modules to download and install to Docker Compose
+#   based development environment of an Invenio-based software.
+
+# Usage:
+# - Write parameters that you would give to a 'git clone' command to
+#   one single line.
+# - Give at least a URL to a git-repository
+#   (e.g. https://github.com/cernopendata/cernopendata-theme.git)
+# - Supports all parameters that can be passed to 'git clone'.
+#   E.g. to checkout a specific branch after cloning input:
+#   '-b <BRANCH_NAME> <REPOSITORY_URL>'
+# - Use '#' to comment out lines so they won't be processed by the downloader.
+
+https://github.com/cernopendata/cernopendata-theme.git
+#https://github.com/cernopendata/cernopendata-pages.git
+#https://github.com/cernopendata/cernopendata.git
+#https://github.com/cernopendata/cernopendata-fixtures.git
+-b template-addition https://github.com/ioannistsanaktsidis/cernopendata.git
+-b glossary-fixtures https://github.com/ioannistsanaktsidis/cernopendata-fixtures.git
+-b glossary-removal https://github.com/ioannistsanaktsidis/cernopendata-pages.git
+#https://github.com/remileduc/invenio-flaskdebugtoolbar.git

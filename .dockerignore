@@ -14,3 +14,9 @@ docker-compose.yml
 docker-compose-dev.yml
 
 Procfile*
+
+_devmodules
+_devmodules/
+devmodules
+devmodules/
+scripts/invdev.sh
