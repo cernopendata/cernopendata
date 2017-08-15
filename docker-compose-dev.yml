@@ -1,0 +1,154 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of CERN Open Data Portal.
+# Copyright (C) 2015, 2016, 2017 CERN.
+#
+# CERN Open Data Portal is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# CERN Open Data Portal is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with CERN Open Data Portal; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
+
+version: "3"
+services:
+
+  wdb:
+    image: kozea/wdb-server
+    ports:
+      - "1984:1984"
+
+  web:
+    restart: "always"
+    build:
+      context: .
+      args:
+        DEBUG: 1
+        FLASK_DEBUG: 1
+    command: /bin/bash -c "pip install -r /devmodules/requirements-extra.txt || true && cernopendata run -h 0.0.0.0"
+    environment:
+      PATH: "/home/invenio/.virtualenvs/cernopendata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      VIRTUALENVWRAPPER_PYTHON: "/usr/local/bin/python"
+      APP_SQLALCHEMY_DATABASE_URI: "postgresql+psycopg2://cernopendata:dbpass123@postgresql:5432/cernopendata"
+      APP_CACHE_REDIS_HOST: "redis"
+      APP_CACHE_REDIS_URL: "redis://redis:6379/0"
+      APP_ACCOUNTS_SESSION_REDIS_URL: "redis://redis:6379/1"
+      APP_BROKER_URL: "amqp://guest:guest@rabbitmq:5672/"
+      APP_CELERY_RESULT_BACKEND: "redis://redis:6379/2"
+      APP_SEARCH_ELASTIC_HOSTS: "elasticsearch"
+      WDB_SOCKET_SERVER: "wdb"
+      WDB_NO_BROWSER_AUTO_OPEN: "True"
+    volumes:
+      - ./devmodules:/devmodules
+#      - ./cernopendata:/code/cernopendata/cernopendata
+      - static:/home/invenio/.virtualenvs/cernopendata/var/cernopendata-instance/static
+    links:
+      - postgresql
+      - redis
+      - elasticsearch
+      - rabbitmq
+      - wdb
+    ports:
+      - "5000:5000"
+
+  worker:
+    restart: "always"
+    build:
+      context: .
+      args:
+        DEBUG: 1
+        FLASK_DEBUG: 1
+#    command: "celery worker -A cernopendata.celery --loglevel=INFO"
+    command: /bin/bash -c "pip install -r /devmodules/requirements-extra.txt || true && celery worker -A cernopendata.celery --loglevel=INFO"
+#    command: /bin/bash -c "pip install -r /devmodules/requirements-extra.txt || true && tail -f /dev/null"
+    environment:
+      PATH: "/home/invenio/.virtualenvs/cernopendata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      VIRTUALENVWRAPPER_PYTHON: "/usr/local/bin/python"
+      APP_SQLALCHEMY_DATABASE_URI: "postgresql+psycopg2://cernopendata:dbpass123@postgresql:5432/cernopendata"
+      APP_CACHE_REDIS_HOST: "redis"
+      APP_CACHE_REDIS_URL: "redis://redis:6379/0"
+      APP_ACCOUNTS_SESSION_REDIS_URL: "redis://redis:6379/1"
+      APP_BROKER_URL: "amqp://guest:guest@rabbitmq:5672/"
+      APP_CELERY_RESULT_BACKEND: "redis://redis:6379/2"
+      APP_SEARCH_ELASTIC_HOSTS: "elasticsearch"
+      WDB_SOCKET_SERVER: "wdb"
+      WDB_NO_BROWSER_AUTO_OPEN: "True"
+    volumes:
+      - ./devmodules:/devmodules
+#      - ./cernopendata:/code/cernopendata/cernopendata
+      - static:/home/invenio/.virtualenvs/cernopendata/var/cernopendata-instance/static
+    links:
+      - postgresql
+      - redis
+      - elasticsearch
+      - rabbitmq
+      - wdb
+    working_dir: "/devmodules/cernopendata"
+
+  postgresql:
+    restart: "always"
+    image: postgres
+    environment:
+      POSTGRES_USER: "cernopendata"
+      POSTGRES_DB: "cernopendata"
+      POSTGRES_PASSWORD: "dbpass123"
+    ports:
+      - "5432"
+
+  redis:
+    restart: "always"
+    image: redis
+    ports:
+      - "6379"
+
+  elasticsearch:
+    restart: "always"
+    build: .
+    build:
+      context: .
+      dockerfile: ./elasticsearch/Dockerfile
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  rabbitmq:
+    restart: "always"
+    image: rabbitmq
+    ports:
+      - "4369"
+      - "5672"
+
+  nginx:
+    restart: "always"
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static:/home/invenio/.virtualenvs/cernopendata/var/cernopendata-instance/static
+    links:
+      - web
+
+  static:
+    restart: "no"
+    build:
+      context: .
+      args:
+        DEBUG: 1
+    volumes:
+      - /home/invenio/.virtualenvs/cernopendata/var/cernopendata-instance/static
+    user: invenio
+
+volumes:
+  static:

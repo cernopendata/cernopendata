@@ -64,5 +64,12 @@ ENV VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
 RUN echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 RUN echo "workon cernopendata" >> ~/.bashrc
 
+# Set Debug of by default.
+ARG DEBUG
+ENV DEBUG ${DEBUG:-False}
+
+ARG FLASK_DEBUG
+ENV FLASK_DEBUG ${FLASK_DEBUG:-0}
+
 # Start the CERN Open Data Portal application:
 CMD ["/bin/bash", "-c", "cernopendata run -h 0.0.0.0"]
