@@ -22,6 +22,6 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
--e git+https://github.com/cernopendata/cernopendata-fixtures.git#egg=cernopendata-fixtures
+"""Pages for CERN Open Data Portal."""
 
--e .[all]
+from __future__ import absolute_import, print_function
