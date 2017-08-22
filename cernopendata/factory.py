@@ -5,6 +5,8 @@
 import os
 import sys
 
+from flaskext.markdown import Markdown
+
 from invenio_base.app import create_app_factory
 from invenio_base.wsgi import create_wsgi_factory
 from invenio_config import create_conf_loader
@@ -46,6 +48,7 @@ create_app = create_app_factory(
     config_loader=config_loader,
     blueprint_entry_points=['invenio_base.blueprints'],
     extension_entry_points=['invenio_base.apps'],
+    extensions=[Markdown],
     converter_entry_points=['invenio_base.converters'],
     wsgi_factory=create_wsgi_factory({'/api': create_api}),
     instance_path=instance_path,

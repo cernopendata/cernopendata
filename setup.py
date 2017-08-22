@@ -69,6 +69,7 @@ install_requires = [
     'Flask-CeleryExt>=0.2.2',
     'Flask-BabelEx>=0.9.3',
     'Flask-Breadcrumbs>=0.4.0',
+    'Flask-Markdown>=0.3.0',
     'Flask-Menu>=0.5.0',
     'Flask>=0.11.1',
     'python-slugify>=1.2.4',
@@ -130,7 +131,7 @@ setup(
             'cernopendata.modules.theme.views:blueprint',
         ],
         'invenio_config.module': [
-                'cernopendata = cernopendata.config',
+            'cernopendata = cernopendata.config',
         ],
         'invenio_pidstore.minters': [
             'cernopendata_recid_minter = '

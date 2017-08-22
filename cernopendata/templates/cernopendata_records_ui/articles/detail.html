@@ -4,17 +4,21 @@
 <div class="container">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h2 style="display: inline;">
+      <h2>
         {{record.title}}
         <h4>
           {% for collection in record.collections%}
-            <span class="label label-success">{{collection}}</span>
+            <span class="label label-success">{{collection|safe}}</span>
           {% endfor %}
         </h4>
       </h2>
     </div>
     <div class="panel-body">
-      {{record.body |safe}}
+      {% if record.get("type", None) == "html" %}
+        {{record.body |safe}}
+      {% elif record.get("type", None) == "md" %}
+        {{record.body |safe | markdown}}
+      {% endif %}
       <hr>
       <div>
         <span>
